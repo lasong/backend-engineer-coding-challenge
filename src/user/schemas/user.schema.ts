@@ -19,4 +19,4 @@ export class User extends Document {
   avatar: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);;
+export const UserSchema = SchemaFactory.createForClass(User);

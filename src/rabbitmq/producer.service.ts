@@ -5,11 +5,11 @@ import { Channel } from 'amqplib';
 @Injectable()
 export class ProducerService {
   private channelWrapper: ChannelWrapper;
-  private queue: string
+  private queue: string;
 
   constructor() {
-    this.queue = 'user_queue'
-    const connection = amqp.connect(['amqp://localhost']);
+    this.queue = 'user_queue';
+    const connection = amqp.connect([process.env.RABBITMQ_URI]);
     this.channelWrapper = connection.createChannel({
       setup: (channel: Channel) => {
         return channel.assertQueue(this.queue, { durable: true });

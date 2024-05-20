@@ -9,8 +9,8 @@ export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = new this.userModel(createUserDto);
-    await createdUser.save();
+    const createdUser = await this.userModel.create(createUserDto);
+    console.log(createdUser)
     // Rabbitmq comes here
     // Email sending comes here
     return createdUser;

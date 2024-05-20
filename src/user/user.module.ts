@@ -11,6 +11,6 @@ import { RabbitmqModule } from '../rabbitmq/rabbitmq.module';
     RabbitmqModule,
   ],
   controllers: [UserController],
-  providers: [UserService]
+  providers: [UserService],
 })
 export class UserModule {}
