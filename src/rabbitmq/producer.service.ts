@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import amqp, { ChannelWrapper } from 'amqp-connection-manager';
+import { connect, ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class ProducerService {
 
   constructor() {
     this.queue = 'user_queue';
-    const connection = amqp.connect([process.env.RABBITMQ_URI]);
+    const connection = connect([process.env.RABBITMQ_URI]);
     this.channelWrapper = connection.createChannel({
       setup: (channel: Channel) => {
         return channel.assertQueue(this.queue, { durable: true });

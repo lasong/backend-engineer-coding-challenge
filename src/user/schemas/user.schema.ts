@@ -3,14 +3,14 @@ import { Document, Types } from 'mongoose';
 
 @Schema()
 export class User extends Document {
-  @Prop({
-    type: String,
-    default: () => new Types.ObjectId().toString(),
-  })
-  _id: string;
+  @Prop()
+  id: number;
 
   @Prop()
-  name: string;
+  first_name: string;
+
+  @Prop()
+  last_name: string;
 
   @Prop()
   email: string;
