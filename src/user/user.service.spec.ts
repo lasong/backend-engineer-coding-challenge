@@ -8,7 +8,6 @@ import { HttpClientService } from '../httpClient/httpClient.service';
 import { ProducerService } from '../rabbitmq/producer.service';
 import { EmailService } from '../email/email.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { NotFoundException } from '@nestjs/common';
 
 const mockUserModel = () => ({
   create: jest.fn(),
@@ -124,8 +123,12 @@ describe('UserService', () => {
       jest.spyOn(userModel, 'findOne').mockReturnValue({
         exec: jest.fn().mockResolvedValueOnce(null),
       } as any);
-      jest.spyOn(httpClientService, 'get').mockResolvedValue({ data: fetchedUser });
-      jest.spyOn(httpClientService, 'getFile').mockResolvedValue(Buffer.from(fileContent));
+      jest
+        .spyOn(httpClientService, 'get')
+        .mockResolvedValue({ data: fetchedUser });
+      jest
+        .spyOn(httpClientService, 'getFile')
+        .mockResolvedValue(Buffer.from(fileContent));
       jest.spyOn(service, 'generateHash').mockReturnValue('hashed_avatar');
       jest.spyOn(fsExtra, 'outputFileSync').mockImplementation(() => {});
 
@@ -157,7 +160,9 @@ describe('UserService', () => {
 
       expect(result).toBe(user.avatar);
       expect(userModel.findOne).toHaveBeenCalledWith({ id: userId });
-      expect(fsExtra.unlinkSync).toHaveBeenCalledWith( `./avatars/${user.avatar}`);
+      expect(fsExtra.unlinkSync).toHaveBeenCalledWith(
+        `./avatars/${user.avatar}`,
+      );
       expect(userModel.deleteOne).toHaveBeenCalledWith({ id: userId });
     });
 
