@@ -8,11 +8,7 @@ To run the app, you must have the following installed:
 
 ## Installation
 
-- Clone the repo:
-
-  ```bash
-  $ git clone git@github.com:lasong/backend-engineer-coding-challenge.git
-  ```
+- Unzip the repo:
 
 - Install packages:
 
