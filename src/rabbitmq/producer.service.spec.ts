@@ -10,9 +10,9 @@ jest.mock('amqp-connection-manager', () => {
     connect: mockConnect.mockImplementation(() => ({
       createChannel: mockCreateChannel.mockImplementation(() => ({
         assertQueue: mockAssertQueue,
-        sendToQueue: jest.fn()
-      }))
-    }))
+        sendToQueue: jest.fn(),
+      })),
+    })),
   };
 });
 
@@ -41,7 +41,7 @@ describe('ProducerService', () => {
       expect(service['channelWrapper'].sendToQueue).toHaveBeenCalledWith(
         service['queue'],
         Buffer.from(JSON.stringify(message)),
-        { persistent: true }
+        { persistent: true },
       );
     });
   });

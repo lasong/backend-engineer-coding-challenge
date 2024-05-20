@@ -7,30 +7,41 @@ import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { HttpClientService } from '../httpClient/httpClient.service';
 import { ProducerService } from '../rabbitmq/producer.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly httpClientService: HttpClientService,
-    private readonly producerService: ProducerService
-    ) {}
+    private readonly producerService: ProducerService,
+    private readonly emailService: EmailService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = await this.userModel.create(createUserDto);
-    this.producerService.sendToQueue('New user Created!')
-    // Email sending comes here
+    const createdUser: any = await this.userModel.create(createUserDto);
+    this.producerService.sendToQueue('New user Created!');
+    const emailData = {
+      email: createdUser.email,
+      subject: 'Welcome to the Challenge',
+      html: `<p>Hello ${createdUser.first_name}</p>`,
+    };
+    await this.emailService.sendEmail(emailData);
     return createdUser;
   }
 
   async update(userId: number, attributes: Partial<User>): Promise<User> {
-    return this.userModel.findOneAndUpdate({ id: userId }, attributes, { new: true }).exec();
+    return this.userModel
+      .findOneAndUpdate({ id: userId }, attributes, { new: true })
+      .exec();
   }
 
   async find(userId: number): Promise<User> {
-    const data: any = await this.httpClientService.get(`${process.env.REQRES_URL}/api/users/${userId}`);
-    const user = data.data as User
-    return user
+    const data: any = await this.httpClientService.get(
+      `${process.env.REQRES_URL}/api/users/${userId}`,
+    );
+    const user = data.data as User;
+    return user;
   }
 
   async fetchAvatar(userId: number): Promise<string> {
@@ -42,7 +53,7 @@ export class UserService {
       const data = await this.find(userId);
       const avatarUrl = data.avatar;
       const file = await this.httpClientService.getFile(avatarUrl);
-      const avatarHash = crypto.createHash('md5').update(file).digest('hex');
+      const avatarHash = this.generateHash(file);
 
       outputFileSync(`./avatars/${avatarHash}`, file);
       await this.userModel.create({ id: userId, avatar: avatarHash });
@@ -57,6 +68,10 @@ export class UserService {
       unlinkSync(`./avatars/${user.avatar}`);
       await this.userModel.deleteOne({ id: userId }).exec();
     }
-    return user?.avatar
+    return user?.avatar;
+  }
+
+  generateHash(file: Buffer): string {
+    return crypto.createHash('md5').update(file).digest('hex');
   }
 }

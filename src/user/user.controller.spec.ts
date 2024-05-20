@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
@@ -10,21 +10,23 @@ const mockUserService = {
   deleteAvatar: jest.fn(),
 };
 
-const userDto = { email: 'test@example.com', first_name: 'John', last_name: 'Doe' };
+const userDto = {
+  email: 'test@example.com',
+  first_name: 'John',
+  last_name: 'Doe',
+};
 const mockUser = { id: '1', ...userDto };
 
 describe('UserController', () => {
   let controller: UserController;
-  let userService: UserService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [{ provide: UserService, useValue: mockUserService }]
+      providers: [{ provide: UserService, useValue: mockUserService }],
     }).compile();
 
     controller = module.get<UserController>(UserController);
-    userService = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {
@@ -81,10 +83,11 @@ describe('UserController', () => {
 
     it('should throw HttpException if deleteAvatar returns false', async () => {
       const userId = 1;
-      const errorMessage = 'Avatar not found';
       mockUserService.deleteAvatar.mockResolvedValue(false);
 
-      await expect(controller.deleteUserAvatar(userId)).rejects.toThrow(HttpException);
+      await expect(controller.deleteUserAvatar(userId)).rejects.toThrow(
+        HttpException,
+      );
     });
   });
 });
