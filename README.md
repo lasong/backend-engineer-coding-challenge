@@ -14,6 +14,7 @@ To run the app, you must have the following installed:
 
   ```bash
   $ yarn install
+  $ yarn upgrade
   ```
 
 ### Set env variables
